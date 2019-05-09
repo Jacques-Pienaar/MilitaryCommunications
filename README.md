@@ -6,3 +6,15 @@
 																		-They should be able to insert into a database.
 3. People should be able to decrypt new communications or view past communications that they have decrypted
 4. 
+
+
+# Naming Conventions
+filenames = name_of_file.txt
+variables = variableName 
+methods = MethodName
+classes = ClassName
+
+ - sql scripts - 
+ MilitaryComs.sql
+ 
+ 
