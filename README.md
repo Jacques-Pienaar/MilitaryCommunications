@@ -17,4 +17,7 @@ classes = ClassName
  - sql scripts - 
  MilitaryComs.sql
  
+ - sql stored procedures -
+ sp_storedProcedure.sql
+ 
  
