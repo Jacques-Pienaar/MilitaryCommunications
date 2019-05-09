@@ -39,7 +39,29 @@ namespace TestingForm_MilitaryComms
         {
             List<Officer> listToReturn = new List<Officer>();
 
+            /* All database related functions */
+            connection.Open();
+            SqlCommand com = new SqlCommand("sp_SelectAllOffices", connection);
+            com.CommandType = CommandType.StoredProcedure;
+            SqlDataReader reader = com.ExecuteReader();
+            
+            while (reader.Read())
+            {
+                Officer officerToAdd = new Officer();
+                officerToAdd.NationId = (string)reader["OfficerID"];
+                officerToAdd.FirstName = (string)reader["FirstName"];
+                officerToAdd.LastName = (string)reader["LastName"];
+                officerToAdd.Age = (int)reader["Age"];
+                officerToAdd.Rank = (int)reader["Rank"];
+                officerToAdd.Username = (string)reader["Username"];
+                officerToAdd.Password = (string)reader["Password"];
+                listToReturn.Add(officerToAdd);
+            }
+            
+            connection.Close();
 
+    
+            /* Database functionality end */
 
             return listToReturn;
         }
