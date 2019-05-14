@@ -6,6 +6,7 @@ namespace MilitaryCommunications
     public delegate void LoginUser();
     public class Officer : Datahandler
     {
+        private string nationalId;
         private string firstName;
         private string lastName;
         private int age;
@@ -13,6 +14,7 @@ namespace MilitaryCommunications
         private string username;
         private string password;
 
+        public string NationalId { get => nationalId; set => nationalId = value; }
         public string FirstName { get => firstName; set => firstName = value; }
         public string LastName { get => lastName; set => lastName = value; }
         public int Age { get => age; set => age = value; }
@@ -53,6 +55,24 @@ namespace MilitaryCommunications
             }
 
             return result;
+        }
+
+        public int Save()
+        {
+            int rowsAffected = SaveOfficer(this);
+            return rowsAffected;
+        }
+
+        public int Update()
+        {
+            int rowsAffected = UpdateOfficer(this);
+            return rowsAffected;
+        }
+
+        public int Delete()
+        {
+            int rowsAffected = DeleteOfficer(this);
+            return rowsAffected;
         }
 
         public bool CompareTo(object obj)

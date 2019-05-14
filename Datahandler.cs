@@ -9,11 +9,13 @@ using System.Data;
 
 namespace TestingForm_MilitaryComms
 {
-    abstract class Datahandler
+    abstract public class Datahandler
     {
 
         SqlConnectionStringBuilder connection = new SqlConnectionStringBuilder();
         SqlConnection conn = new SqlConnection();
+        SqlCommand com;
+        SqlDataReader reader;
         private string ConnectionString = @"Data Source=DESKTOP-RLPPP3A;Initial Catalog=MilitaryComms;Integrated Security=True";
 
         public Datahandler()
@@ -34,16 +36,17 @@ namespace TestingForm_MilitaryComms
          */
 
  
-
+        /* Gets All of the officers from the database */
         public List<Officer> GetOfficers()
         {
             List<Officer> listToReturn = new List<Officer>();
+            
 
             /* All database related functions */
             connection.Open();
-            SqlCommand com = new SqlCommand("sp_SelectAllOffices", connection);
+            com = new SqlCommand("sp_SelectAllOffices", connection);
             com.CommandType = CommandType.StoredProcedure;
-            SqlDataReader reader = com.ExecuteReader();
+            reader = com.ExecuteReader();
             
             while (reader.Read())
             {
@@ -65,6 +68,142 @@ namespace TestingForm_MilitaryComms
 
             return listToReturn;
         }
+
+        public List<Message> GetAllMessages()
+        {
+            string proc = "sp_GetAllMessages";
+            conn.Open();
+
+            com = new SqlCommand(proc, conn);
+            com.CommandType = CommandType.StoredProcedure;
+            reader = com.ExecuteReader();
+
+            while(reader.Read())
+            {
+                Message message = new Message();
+                message.UserId = Convert.ToInt32(reader["UserId"]);
+                message.Message = Convert.ToString(reader["Message"]);
+                message.TimeToDecrypt = Convert.ToDateTime(reader["TimeToDecrypt"]);
+
+                listToReturn.Add(message);
+            }
+
+            conn.Close();
+
+            return listToReturn;
+        }
+
+        public Message GetMessage(Message messageToGet)
+        {
+            Message messageToReturn = new Message();
+            string proc = "sp_GetMessage";
+            conn.Open();
+
+            com = new SqlCommand(proc, conn);
+            com.CommandType = CommandType.StoredProcedure;
+            com.Paramaters.Add(new SqlParamater("@message_id", messageToGet.MessageId));
+
+            reader = com.ExecuteReader();
+
+            while(reader.Read())
+            {
+                messageToReturn.MessageId = messageToGet.MessageId;
+                messageToReturn.UserId = Convert.ToInt32(reader["UserId"]);
+                messageToReturn.Message = Convert.ToString(reader["Message"]);
+                messageToReturn.TimeToDecrypt = Convert.ToDateTime(reader["TimeToDecrypt"]);
+            }
+
+            conn.Close();
+            return messageToReturn;
+        }
+
+        public int SaveMessage(Message message)
+        {
+            string proc = "sp_SaveMessage";
+            int rowsAffected = 0;
+
+            conn.Open();
+            com = new SqlCommand(proc, conn);
+            com.CommandType = CommandType.StoredProcedure;
+
+            com.Paramaters.Add(new SqlParamater("@UserId", message.UserId));
+            com.Paramaters.Add(new SqlParamater("@Message", message.Message));
+            com.Paramaters.Add(new SqlParamater("@TimeToDecrypt", message.TimeToDecrypt));
+
+            rowsAffected = com.ExecuteNonQuery();
+            
+            conn.Close();
+
+            return rowsAffected;
+        }
+
+        public int SaveOfficer(Officer officer)
+        {
+            string proc = "sp_SaveOfficer";
+            int rowsAffected = 0;
+
+            conn.Open();
+            com = new SqlCommand(proc, conn);
+            com.CommandType = CommandType.StoredProcedure;
+
+            com.Paramaters.Add(new SqlParamater("@NationalId", officer.NationalId));
+            com.Paramaters.Add(new SqlParamater("@FirstName", officer.FirstName));
+            com.Paramaters.Add(new SqlParamater("@LastName", officer.LastName));
+            com.Paramaters.Add(new SqlParamater("@Age", officer.Age));
+            com.Paramaters.Add(new SqlParamater("@Rank", officer.Rank));
+            com.Paramaters.Add(new SqlParamater("@Username", officer.Username));
+            com.Paramaters.Add(new SqlParamater("@Password", officer.Password));
+
+            rowsAffected = com.ExecuteNonQuery();
+            
+            conn.Close();
+
+            return rowsAffected;
+        }
+
+        public int UpdateOfficer(Officer officer)
+        {
+            string proc = "sp_UpdateOfficer";
+            int rowsAffected = 0;
+
+            conn.Open();
+            com = new SqlCommand(proc, conn);
+            com.CommandType = CommandType.StoredProcedure;
+
+            com.Paramaters.Add(new SqlParamater("@NationalId", officer.NationalId));
+            com.Paramaters.Add(new SqlParamater("@FirstName", officer.FirstName));
+            com.Paramaters.Add(new SqlParamater("@LastName", officer.LastName));
+            com.Paramaters.Add(new SqlParamater("@Age", officer.Age));
+            com.Paramaters.Add(new SqlParamater("@Rank", officer.Rank));
+            com.Paramaters.Add(new SqlParamater("@Username", officer.Username));
+            com.Paramaters.Add(new SqlParamater("@Password", officer.Password));
+
+            rowsAffected = com.ExecuteNonQuery();
+            
+            conn.Close();
+
+            return rowsAffected;
+        }
+
+        public int DeleteOfficer(Officer officer)
+        {
+            string proc = "sp_DeleteOfficer";
+            int rowsAffected = 0;
+
+            conn.Open();
+            com = new SqlCommand(proc, conn);
+            com.CommandType = CommandType.StoredProcedure;
+
+            com.Paramaters.Add(new SqlParamater("@NationalId", officer.NationalId));
+            
+
+            rowsAffected = com.ExecuteNonQuery();
+            
+            conn.Close();
+
+            return rowsAffected;
+        }
+
 
          
     }
